@@ -1,0 +1,17 @@
+<ol class="breadcrumb">
+	<li><a href="/"><%= __('Home') %></a></li>
+	<li><a href="/user/"><%= __('Users') %></a></li>
+	<li class="active"><%= __('Create user') %></li>
+</ol>
+<form role="form" action="/user/create" method="POST" class="form-center" id="sign-up-form">
+	<h2 class="form-signin-heading"><%= __('Create user') %></h2>
+	<div class="form-group">
+		<label for="email"><%= __('Email') %></label>
+		<input type="email" class="form-control" placeholder="<%= __('someone@somewhere.com') %>" name="email" id="email" required />
+	</div>
+	<div class="form-group">
+		<label for="password"><%= __('Password') %></label>
+		<input type="password" class="form-control" placeholder="<%= __('Password') %>" name="password" id="password" required minlength="6" />
+	</div>
+	<input type="submit" class="btn btn-primary btn-block" value="<%= __('Create user') %>" />
+</form>

@@ -28,13 +28,43 @@
     -->
 
     <!--STYLES-->
-    
+    <link rel="stylesheet" href="/linker/styles/bootstrap.css">
+    <link rel="stylesheet" href="/linker/styles/bootstrap-theme.css">
+    <link rel="stylesheet" href="/linker/styles/style.css">
     <!--STYLES END-->
   </head>
 
   <body>
-    <%- body %>
+    <div id="wrap">
+      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Realtime Webapp</a>
+          </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+            <li<% if( req.url.indexOf('user') != -1) { %> class="active"<% } %>><a href="/user"><%= __('Users') %></a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
 
+      <section class="container">
+        <%- body %>
+      </section>
+    </div>
+
+    <footer id="footer" class="navbar navbar-default navbar-fixed-bottom">
+      <div class="container">
+        <p class="text-muted">© Jorge del Casar 2014</p>
+      </div>
+    </footer>
 
 
     <!--
@@ -89,6 +119,8 @@
     <script src="/linker/js/socket.io.js"></script>
     <script src="/linker/js/sails.io.js"></script>
     <script src="/linker/js/app.js"></script>
+    <script src="/linker/js/jquery.js"></script>
+    <script src="/linker/js/bootstrap.js"></script>
     <!--SCRIPTS END-->
   </body>
 </html>
