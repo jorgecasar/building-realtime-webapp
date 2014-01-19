@@ -49,8 +49,25 @@
           </div>
           <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-            <li<% if( req.url.indexOf('user') != -1) { %> class="active"<% } %>><a href="/user"><%= __('Users') %></a></li>
+              <li<% if( req.url.indexOf('user') != -1) { %> class="active"<% } %>><a href="/user"><%= __('Users') %></a></li>
             </ul>
+            <% if( session.authenticated ) { %>
+              <ul class="nav navbar-nav navbar-right">
+                <li><a href="/user/<%= session.user.id %>"><%= session.user.email %></a>
+                </li>
+                <li>
+                  <form class="navbar-form" action="/user/logout">
+                    <button type="submit" class="btn btn-danger" title="<%= __('Sign out')%>"><%= __('Sign out')%> <span class="glyphicon glyphicon-log-out"></span></button>
+                  </form>
+                </li>
+              </ul>
+            <% } else { %>
+              <ul class="nav navbar-nav navbar-right">
+                <li>
+                <li><a href="/user/new"><span class="glyphicon glyphicon-edit"></span> Sign up</a></li>
+                <li><a href="/user/auth"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>
+              </ul>
+            <% } %>
           </div><!--/.nav-collapse -->
         </div>
       </div>

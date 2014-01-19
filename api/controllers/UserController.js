@@ -125,16 +125,52 @@ module.exports = {
 	/*
 	 * Actions to render a view.
 	 */
-	new: function(req, res, next) {
+	new: function(req, res) {
 		// Response the view with the action's name.
 		return res.view();
 	},
-	edit: function(req, res, next) {
+	edit: function(req, res) {
 		User.findOne(req.param('id')).done(function foundUser(err, user){
 			if ( err ) return next(err);
 			// Response the view with the action's name.
 			else return res.view({ user: user });
 		});
-	}
+	},
+	// This accion will render the view with the login form
+	auth: function(req, res) {
+		return res.view();
+	},
 	
+	/*
+	 * Actions that proccess info.
+	 */
+	login: function(req, res) {
+		// Get the unique user with this email.
+		User.findOne({email: req.param('email')}).done(function(err, user){
+			// If there are an error,
+			// or the user doesn't exist,
+			// return to auth page.
+			// TODO: Error handler.
+			if ( err || !user ) return res.redirect('/user/auth');
+			require('bcrypt').compare(req.param('password'), user.password, function(err, valid){
+				// If there are an error,
+				// or the pass doesn't match,
+				// return to auth page.
+				// TODO: Error handler.
+				if(err || !valid ) return res.redirect('/user/auth');
+				// Set autenticated to true.
+				req.session.authenticated = true;
+				// save the user data in the session.
+				req.session.user = user;
+				// Redirect to the user page.
+				return res.redirect('/user/' + user.id);
+			});
+		});
+	},
+	logout: function(req, res){
+		// Destroy the session.
+		req.session.destroy();
+		// Redirect to home page.
+		return res.redirect('/');
+	}
 };
