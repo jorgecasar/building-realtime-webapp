@@ -76,6 +76,11 @@ module.exports = {
 		// Schema is true, then we will save that we need.
 		User.create( req.params.all(), function createdUser(err, user){
 			if (err) return next(err);
+			// Set autenticated to true.
+			req.session.authenticated = true;
+			// save the user data in the session.
+			req.session.user = user;
+			// Redirect to the user page.
 			// Response JSON if needed.
 			// Status 201 is Created.
 			if (req.wantsJSON) return res.json(201, user);
