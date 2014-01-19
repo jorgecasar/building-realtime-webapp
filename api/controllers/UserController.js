@@ -25,6 +25,8 @@ module.exports = {
 		// If id is a shortcut we don't have to find.
 		if ( isShortcut(id) ) return next();
 
+		req.session.canAdminUser = canAdminUser(id, req.session.user);
+
 		// If we get an id we will retun one unique user.
 		if (id) {
 			User.findOne(id).done(function foundUser(err, user){
@@ -69,6 +71,11 @@ module.exports = {
 		}
 		function isShortcut(id){
 			return (id === 'find' || id === 'create' || id === 'update' || id === 'destroy' );
+		}
+		function canAdminUser(id, sessionUser){
+			// Check if there are an logged user
+			// and the id is the requested one
+			return sessionUser && sessionUser.id === id;
 		}
 	},
 	create: function(req, res, next) {
