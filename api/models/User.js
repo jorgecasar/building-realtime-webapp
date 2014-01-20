@@ -59,16 +59,19 @@ module.exports = {
 					}
 				});
 			}
-		} else {
-			// Otherwise, save the same password user had.
+		} else if (values.id) {
+			// If we are updating the data but the password is not submited.
 			User.findOne(values.id).done(function(err, user) {
 				if (err) {
 					return next(err);
 				} else {
+					// Take the same password user had.
 					values.password = user.password;
 					next();
 				}
 			});
+		} else {
+			next();
 		}
 	}
 
