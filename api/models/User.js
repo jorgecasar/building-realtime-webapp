@@ -41,7 +41,7 @@ module.exports = {
 	beforeCreate: function(values, next) {
 		hashPassword(values, next);
 	},
-	beforeUpdate: function(values, next) {
+	beforeValidation: function(values, next) {
 		if( values.password && values.new_password && values.confirm_password) {
 			// If we recive a password. We will try to change for the new one.
 			if ( values.new_password === values.confirm_password ) {
