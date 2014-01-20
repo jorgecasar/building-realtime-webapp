@@ -51,9 +51,9 @@
             <ul class="nav navbar-nav">
               <li<% if( req.url.indexOf('user') != -1) { %> class="active"<% } %>><a href="/user"><%= __('Users') %></a></li>
             </ul>
-            <% if( session.authenticated ) { %>
+            <% if( loggedUser ) { %>
               <ul class="nav navbar-nav navbar-right">
-                <li><a href="/user/<%= session.user.id %>"><%= session.user.email %></a>
+                <li><a href="/user/<%= loggedUser.id %>"><%= loggedUser.username %></a>
                 </li>
                 <li>
                   <form class="navbar-form" action="/user/logout">

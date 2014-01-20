@@ -9,7 +9,7 @@
 module.exports = function(req, res, next) {
 
 	// Allow only if the user requested is the same as logged.
-	if (req.param('id') === req.session.user.id) return next();
+	if (req.param('id') === req.user.id) return next();
 
 	// User is not allowed
 	// (default res.forbidden() behavior can be overridden in `config/403.js`)

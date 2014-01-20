@@ -1,26 +1,30 @@
 <ol class="breadcrumb">
 	<li><a href="/"><%= __('Home') %></a></li>
 	<li><a href="/user/"><%= __('Users') %></a></li>
-	<li><a href="/user/<%= user.id %>"><%= user.email %></a></li>
+	<li><a href="/user/<%= user.id %>"><%= user.username %></a></li>
 	<li class="active"><%= __('Edit') %></li>
 </ol>
 <form action="/user/update/<%= user.id %>" method="POST" class="form-center" id="sign-up-form">
 	<h2 class="form-signin-heading"><%= __('Edit account') %></h2>
+	<div class="form-group">
+		<label for="username"><%= __('Username') %></label>
+		<input type="text" class="form-control" placeholder="<%= __('Username') %>" value="<%= user.username || user.id %>" name="username" id="username" required />
+	</div>
 	<div class="form-group">
 		<label for="email"><%= __('Email') %></label>
 		<input type="email" class="form-control" placeholder="<%= __('someone@somewhere.com') %>" value="<%= user.email %>" name="email" id="email" required />
 	</div>
 	<div class="form-group">
 		<label for="password"><%= __('Old password') %></label>
-		<input type="password" class="form-control" placeholder="<%= __('Old password') %>" name="password" id="password" required minlength="6" />
+		<input type="password" class="form-control" placeholder="<%= __('Old password') %>" name="password" id="password" minlength="6" />
 	</div>
 	<div class="form-group">
 		<label for="new_password"><%= __('New password') %></label>
-		<input type="password" class="form-control" placeholder="<%= __('New password') %>" name="new_password" id="new_password" required minlength="6" />
+		<input type="password" class="form-control" placeholder="<%= __('New password') %>" name="new_password" id="new_password" minlength="6" />
 	</div>
 	<div class="form-group">
 		<label for="confirm_password"><%= __('Confirm password') %></label>
-		<input type="password" class="form-control" placeholder="<%= __('Confirm password') %>" name="confirm_password" id="confirm_password" required minlength="6" />
+		<input type="password" class="form-control" placeholder="<%= __('Confirm password') %>" name="confirm_password" id="confirm_password" minlength="6" />
 	</div>
 	<input type="submit" class="btn btn-primary btn-block" value="<%= __('Update account') %>" />
 </form>

@@ -156,32 +156,20 @@ module.exports = {
 	/*
 	 * Actions that proccess info.
 	 */
-	login: function(req, res) {
-		// Get the unique user with this email.
-		User.findOne({email: req.param('email')}).done(function(err, user){
-			// If there are an error,
-			// or the user doesn't exist,
-			// return to auth page.
-			// TODO: Error handler.
-			if ( err || !user ) return res.redirect('/user/auth');
-			require('bcrypt').compare(req.param('password'), user.password, function(err, valid){
-				// If there are an error,
-				// or the pass doesn't match,
-				// return to auth page.
-				// TODO: Error handler.
-				if(err || !valid ) return res.redirect('/user/auth');
-				// Set autenticated to true.
-				req.session.authenticated = true;
-				// save the user data in the session.
-				req.session.user = user;
+	login: function(req, res, next) {
+		// Use Passport LocalStrategy
+		require('passport').authenticate('local', function(err, user, info){
+			if ((err) || (!user)) next(err);
+			req.logIn(user, function(err){
+				if (err) return res.redirect('/user/auth');
 				// Redirect to the user page.
 				return res.redirect('/user/' + user.id);
 			});
-		});
+		})(req, res);
 	},
 	logout: function(req, res){
-		// Destroy the session.
-		req.session.destroy();
+		// Call Passport method to destroy the session.
+		req.logout();
 		// Redirect to home page.
 		return res.redirect('/');
 	}

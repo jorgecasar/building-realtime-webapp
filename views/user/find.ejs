@@ -5,14 +5,15 @@ if ( typeof users === 'undefined' ) {
 <ol class="breadcrumb">
 	<li><a href="/"><%= __('Home') %></a></li>
 	<li><a href="/user/"><%= __('Users') %></a></li>
-	<li class="active"><%= user.email %></li>
+	<li class="active"><%= user.username %></li>
 </ol>
 
-<h2><%= user.email %></h2>
+<h2><%= user.username %></h2>
 	<%
 	if ( session.canAdminUser ) {
 	// There logged user and showed user is the same.
 	%>
+	<p>Email: <%= user.email %></p>
 	<form action="/user/destroy/<%= user.id %>" method="POST">
 		<a class="btn btn-primary" href="/user/edit/<%= user.id %>">Edit</a>
 		<input type="hidden" name="_method" value="delete"/>
@@ -28,10 +29,10 @@ if ( typeof users === 'undefined' ) {
 	<li><a href="/"><%= __('Home') %></a></li>
 	<li class="active"><%= __('Users') %></li>
 </ol>
-<h2>Users <a class="btn btn-sm btn-default" href="/user/new"><%= __('Create new') %></a></h2>
+<h2>Users</h2>
 <ul>
 <% _.each(users, function(user){ %>
-	<li><a href="/user/<%= user.id %>"><%= user.email %></a></li>
+	<li><a href="/user/<%= user.id %>"><%= user.username %></a></li>
 <% }); %>
 </ul>
 
