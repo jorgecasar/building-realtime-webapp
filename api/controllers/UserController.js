@@ -25,7 +25,7 @@ module.exports = {
 		// If id is a shortcut we don't have to find.
 		if ( isShortcut(id) ) return next();
 
-		req.session.canAdminUser = canAdminUser(id, req.session.user);
+		req.session.canAdminUser = canAdminUser(id, req.user);
 
 		// If we get an id we will retun one unique user.
 		if (id) {
@@ -83,16 +83,15 @@ module.exports = {
 		// Schema is true, then we will save that we need.
 		User.create( req.params.all(), function createdUser(err, user){
 			if (err) return next(err);
-			// Set autenticated to true.
-			req.session.authenticated = true;
-			// save the user data in the session.
-			req.session.user = user;
-			// Redirect to the user page.
-			// Response JSON if needed.
-			// Status 201 is Created.
-			if (req.wantsJSON) return res.json(201, user);
-			// Redirect to the user page that we've just created
-			else return res.redirect('/user/' + user.id);
+			req.login(user, function(err){
+				if (err) return res.redirect('/user/auth');
+				// Redirect to the user page.
+				// Response JSON if needed.
+				// Status 201 is Created.
+				if (req.wantsJSON) return res.json(201, user);
+				// Redirect to the user page that we've just created
+				else return res.redirect('/user/' + user.id);
+			});
 		});
 	},
 	update: function(req, res, next) {
@@ -160,7 +159,7 @@ module.exports = {
 		// Use Passport LocalStrategy
 		require('passport').authenticate('local', function(err, user, info){
 			if ((err) || (!user)) next(err);
-			req.logIn(user, function(err){
+			req.login(user, function(err){
 				if (err) return res.redirect('/user/auth');
 				// Redirect to the user page.
 				return res.redirect('/user/' + user.id);
