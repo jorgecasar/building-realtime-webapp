@@ -153,6 +153,23 @@ module.exports = function (grunt) {
         }
         ]
       },
+      prod: {
+        files: [
+          {
+            expand: true,
+            cwd: './assets',
+            src: ['**/*.!(coffee)', '!**/fonts/**'],
+            dest: '.tmp/public'
+          },
+          {
+            expand: true,
+            flatten: true,
+            cwd: './assets',
+            src: ['**/fonts/*'],
+            dest: '.tmp/public/fonts/'
+          }
+        ]
+      },
       build: {
         files: [
           {
