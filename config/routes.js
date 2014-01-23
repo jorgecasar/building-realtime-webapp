@@ -35,8 +35,8 @@ module.exports.routes = {
 	'/': {
 		view: 'home/index'
 	},
-	'post /user/login/:provider?': 'UserController.login',
-	'post /user/logout/:provider?': 'UserController.logout'
+	'/user/login/:provider?': 'UserController.login',
+	'/user/logout/:provider?': 'UserController.logout'
 
 	/*
 	// But what if you want your home page to display
