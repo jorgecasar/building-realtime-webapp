@@ -8,16 +8,50 @@ if ( typeof users === 'undefined' ) {
 	<li class="active"><%= user.username %></li>
 </ol>
 
-<h2><%= user.username %></h2>
-	<%
-	if ( session.canAdminUser ) {
-	// There logged user and showed user is the same.
-	%>
-	<p>Email: <%= user.email %></p>
-	<form action="/user/destroy/<%= user.id %>" method="POST">
+<div class="page-header">
+<h2>
+	<%= user.username %>
+	<% if ( session.canAdminUser ) { %>
+		<small><%= user.email %></small>
 		<a class="btn btn-primary" href="/user/edit/<%= user.id %>">Edit</a>
+	<% } %>
+</h2>
+</div>
+<% if ( session.canAdminUser ) {
+// There logged user and showed user is the same.
+%>
+	<% if ( sails.config.providers ) { %>
+		<h3><%= __('Profiles') %></h3>
+		<ul>
+			<% _.each(sails.config.providers, function(provider, provider_id){ %>
+				<li>
+					<% if( _.find(
+						user.profiles,
+						function(profile) {
+							return profile.provider == provider_id;
+						}
+					) ) { %>
+					<form action="/user/logout/<%= provider_id %>" method="POST">
+						<p><input type="submit" class="btn btn-sm btn-danger" value="<%= __('Unlink with %s', __(provider_id) ) %>"/></p>
+					</form>
+					<% } else { %>
+					<form action="/user/login/<%= provider_id %>" method="POST">
+						<p>
+							<input type="submit" class="btn btn-sm btn-success" value="<%= __('Link with %s', __(provider_id) ) %>"/>
+						</p>
+					</form>
+					<% } %>
+				</li>
+			<% }); %>
+		</ul>
+	<% } %>
+	<form action="/user/destroy/<%= user.id %>" method="POST">
+		<h3><%= __('Delete your account') %></h3>
+		<p><%= __('You can undo this action. Press the button if you are completely sure.') %></p>
 		<input type="hidden" name="_method" value="delete"/>
-		<input type="submit" class="btn btn-danger" value="<%= __('Delete') %>"/>
+		<p>
+			<input type="submit" class="btn btn-danger" value="<%= __('Delete') %>"/>
+		</p>
 	</form>
 	<% } %>
 <%

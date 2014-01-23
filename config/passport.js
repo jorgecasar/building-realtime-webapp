@@ -1,6 +1,6 @@
 var passport      = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
-    bcrypt = require('bcrypt');
+    bcrypt        = require('bcrypt');
 
 // Passport session setup.
 // To support persistent login sessions, Passport needs to be able to
@@ -34,17 +34,28 @@ passport.use(new LocalStrategy(
 				]
 			}).done(function(err, user) {
 				if (err) { return done(null, err); }
-				if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
+				if (!user) {
+					var user = {};
+					var re_email = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+					// If username is an email, save as mail, else as username.
+					user[re_email.test(username)?'email':'username'] = username;
+					return done(null, user, { message: 'Unknown user ' + username });
+				}
 				bcrypt.compare(password, user.password, function(err, res) {
 					if (!res) return done(null, false, { message: 'Invalid Password'});
 					return done(null, user, { message: 'Logged In Successfully'} );
 				});
-			})
+			});
 		});
 	}
 ));
 
 module.exports = {
+	providers: {
+		'github': {},
+		'facebook': {},
+		'twitter': {}
+	},
 	express: {
 		customMiddleware: function(app){
 			console.log('Express midleware for passport');

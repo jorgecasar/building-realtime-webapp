@@ -67,6 +67,22 @@ module.exports = {
 			// Config by connection URI.
 			// url: mongodb://localhost/building-realtime-webapp
 		}
+	},
+	providers: {
+		'github': {
+			clientID: process.env.GITHUB_CLIENT_ID || 'GITHUB_CLIENT_ID',
+			clientSecret: process.env.GITHUB_CLIENT_SECRET || 'GITHUB_CLIENT_SECRET',
+			callbackURL: process.env.GITHUB_CALLBACK_URL || 'http://localhost:1337/user/login/github'
+		},
+		'facebook': {
+			clientID: process.env.FACEBOOK_CLIENT_ID || 'FACEBOOK_CLIENT_ID',
+			clientSecret: process.env.FACEBOOK_CLIENT_SECRET || 'FACEBOOK_CLIENT_SECRET',
+			callbackURL: process.env.FACEBOOK_CALLBACK_URL || 'http://localhost:1337/user/login/facebook'
+		},
+		'twitter': {
+			consumerKey: process.env.TWITTER_CONSUMER_KEY || 'TWITTER_CONSUMER_KEY',
+			consumerSecret: process.env.TWITTER_CONSUMER_SECRET || 'TWITTER_CONSUMER_SECRET',
+			callbackURL: process.env.TWITTER_CALLBACK_URL || 'http://localhost:1337/user/login/twitter'
+		}
 	}
-
 };

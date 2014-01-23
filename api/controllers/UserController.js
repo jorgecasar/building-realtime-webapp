@@ -81,7 +81,8 @@ module.exports = {
 	create: function(req, res, next) {
 		// Create an user using all params.
 		// Schema is true, then we will save that we need.
-		User.create( req.params.all(), function createdUser(err, user){
+		var params = _.extend({}, req.session.tempUser, req.params.all());
+		User.create( params, function createdUser(err, user){
 			if (err) return next(err);
 			req.login(user, function(err){
 				if (err) return res.redirect('/user/auth');
@@ -156,20 +157,111 @@ module.exports = {
 	 * Actions that proccess info.
 	 */
 	login: function(req, res, next) {
-		// Use Passport LocalStrategy
-		require('passport').authenticate('local', function(err, user, info){
-			if ((err) || (!user)) next(err);
-			req.login(user, function(err){
-				if (err) return res.redirect('/user/auth');
-				// Redirect to the user page.
-				return res.redirect('/user/' + user.id);
-			});
-		})(req, res);
+		var provider = req.param('provider') || 'local';
+		sails.log.verbose('AuthController.login:', isProvider);
+		if ( provider === 'local' || isProvider(provider) ) return linkProfile(provider, req, res, next);
+		return res.redirect('/user/auth');
 	},
-	logout: function(req, res){
+	logout: function(req, res, next){
+		sails.log.verbose('AuthController.login');
+		var provider = req.param('provider');
+		if ( isProvider(provider) ) return unlinkProfile(provider, req, res, next);
 		// Call Passport method to destroy the session.
 		req.logout();
 		// Redirect to home page.
 		return res.redirect('/');
 	}
 };
+
+function isProvider(provider){
+	return sails.config.providers[provider];
+}
+
+function linkProfile(provider, req, res, next){
+	sails.log.verbose('AuthController linkProfile');
+	process.nextTick(function () {
+		require('passport').authenticate(
+			provider,
+			function (err, user) {
+				sails.log.verbose('authenticate callback');
+				// If there are a logged user.
+				if( req.user ){
+					sails.log.verbose('req.user');
+					// If there are a user in our DB.
+					if ( user.id ) {
+						sails.log.verbose('user.id');
+						//  If the ids match.
+						if( req.user.id === user.id ){
+							sails.log.verbose('req.user.id === user.id');
+							// Return to logeduser page
+							return res.redirect('/user/' + req.user.id);
+						}
+						// Otherwise, the ids are differents.
+						else {
+							sails.log.verbose('req.user.id !== user.id');
+							// There are another user with this account.
+							// TODO: Solve the conflict.
+							return res.redirect('/user/' + req.user.id);
+						}
+					}
+					// There aren't a user in our DB.
+					else {
+						sails.log.verbose('!user.id');
+						// Save the new profile.
+						User.findOne(req.user.id).done(function(err, localUser){
+							if( err ) res.serverError(err);
+							sails.log.verbose('Adding profile', user.profiles[0]);
+							localUser.profiles.push(user.profiles[0]);
+							localUser.save(function(err){
+								if( err ) {
+									// TODO: Notify error.
+									return res.redirect('/user/' + req.user.id);
+								}
+								return res.redirect('/user/' + req.user.id);
+							});
+						});
+					}
+				} else {
+					sails.log.verbose('!req.user');
+					if( user.id ) {
+						sails.log.verbose('user.id');
+						req.login(user, function (err) {
+							if (err) return res.serverError([err]);
+							return res.redirect('/user/' + user.id);
+						});
+					} else {
+						sails.log.verbose('!user.id');
+						// Save the temporal user in the session.
+						req.session.tempUser = user;
+						//TODO: Notify that the user need a new account.
+						return res.redirect('/user/new');
+					}
+				}
+			}
+		)(req, res, next);
+	});
+}
+
+function unlinkProfile(provider, req, res){
+	User.findOne(req.user.id).done(function(err, user){
+		var foundProfile = false;
+		var i = user.profiles.length;
+		while( !foundProfile && i >= 0){
+			i--;
+			foundProfile = user.profiles[i].provider === provider;
+		}
+		if( foundProfile ) {
+			user.profiles.splice(i, 1);
+			user.save(function(err, user){
+				if( err ) {
+					// TODO: Notify error.
+					return res.redirect('/user/' + user.id);
+				}
+				return res.redirect('/user/' + user.id);
+			});
+		} else {
+			// TODO: Notify provider not found.
+			return res.redirect('/user/' + user.id);
+		}
+	});
+}

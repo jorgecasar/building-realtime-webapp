@@ -7,15 +7,14 @@
 	<h2 class="form-signin-heading"><%= __('Create user') %></h2>
 	<div class="form-group">
 		<label for="username"><%= __('Username') %></label>
-		<input type="text" class="form-control" placeholder="<%= __('Username') %>" name="username" id="username" required />
+		<input type="text" class="form-control" placeholder="<%= __('Username') %>" name="username" id="username" required<% if( session.tempUser && session.tempUser.username ) { %> value="<%= session.tempUser.username %>"<% } %>/>
 	</div>
 	<div class="form-group">
 		<label for="email"><%= __('Email') %></label>
-		<input type="email" class="form-control" placeholder="<%= __('someone@somewhere.com') %>" name="email" id="email" required />
+		<input type="email" class="form-control" placeholder="<%= __('someone@somewhere.com') %>" name="email" id="email" required<% if( session.tempUser && session.tempUser.email) { %> value="<%= session.tempUser.email %>"<% } %>/>
 	</div>
 	<div class="form-group">
 		<label for="password"><%= __('Password') %></label>
 		<input type="password" class="form-control" placeholder="<%= __('Password') %>" name="password" id="password" required minlength="6" />
-	</div>
-	<input type="submit" class="btn btn-primary btn-block" value="<%= __('Create user') %>" />
+	</div><input type="submit" class="btn btn-primary btn-block" value="<%= __('Create user') %>" />
 </form>
