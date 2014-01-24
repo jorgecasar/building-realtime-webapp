@@ -126,10 +126,11 @@ module.exports = {
 			// Delete the user.
 			User.destroy(user.id).done(function userDestroyed(err){
 				if ( err ) return next();
+				req.logout();
 				// Response JSON if needed.
 				if (req.wantsJSON) return res.json(200);
 				// Redirect to the users page.
-				else return res.redirect('/user');
+				else return res.redirect('/');
 			})
 		});
 	},
